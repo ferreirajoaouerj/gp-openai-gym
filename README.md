@@ -1,4 +1,4 @@
-# Project Title
+# Genetic Programming scripts for OpenAI Gym environments
 
 Python scripts implementing genetic programming (in DEAP) for some OpenAI Gym environments. Includes basic python scripts for training and visualizing DQN and DDPG reinforcement learning agents, using Stable-Baselines, for comparison.
 
