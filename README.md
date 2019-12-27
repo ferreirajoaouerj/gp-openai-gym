@@ -4,7 +4,9 @@ Python scripts implementing genetic programming (in DEAP) for some OpenAI Gym en
 
 * [DEAP](https://github.com/deap/deap) - Distributed Evolutionary Algorithms for Python
 * [OpenAI Gym](https://gym.openai.com/) - Toolkit for developing and comparing reinforcement learning algorithms
+* [Pybullet Gym](https://github.com/benelot/pybullet-gym) - Open-source implementations of OpenAI Gym MuJoCo environments for use with the OpenAI Gym 
 * [Stable-Baselines](https://github.com/hill-a/stable-baselines) - A fork of OpenAI Baselines, implementations of reinforcement learning algorithms 
+
 
 ## Getting Started
 
