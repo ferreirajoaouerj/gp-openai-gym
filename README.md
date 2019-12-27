@@ -20,7 +20,7 @@ Most parameters can be edited in the initial lines by changing the dictionary va
 
 ### Prerequisites
 
-Please refer to DEAP, Gym and Stable-Baselines documentation for detailed instructions.
+Please refer to DEAP, Gym, Pybullet-Gym and Stable-Baselines documentation for detailed instructions.
 
 ## License
 
@@ -29,6 +29,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 
 * Thanks for the people involved in the DEAP project
-* Thanks for everyone contributing to OpenAI Gym
+* Thanks for everyone contributing to OpenAI Gym and Pybullet-Gym
 * Thanks araffin for the stable-baselines package
 
