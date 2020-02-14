@@ -1,0 +1,1 @@
+Como verificar o que é desi
