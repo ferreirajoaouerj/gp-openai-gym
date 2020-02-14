@@ -30,6 +30,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
+* Thanks for my project supervisors: Dr. Douglas and Dr. Téo
 * Thanks for the people involved in the DEAP project
 * Thanks for everyone contributing to OpenAI Gym and Pybullet-Gym
 * Thanks araffin for the stable-baselines package
