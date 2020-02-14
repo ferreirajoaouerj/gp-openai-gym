@@ -18,6 +18,8 @@ In case you save the statistics or decide to not run again, the pickle file will
 
 Most parameters can be edited in the initial lines by changing the dictionary values.
 
+A new environment is implemented using 'Gym' interface named 'Carrinho', and is present in the 'gym-carinho' folder. It deals with the motion planning of a car-like robot.
+
 ### Prerequisites
 
 Please refer to DEAP, Gym, Pybullet-Gym and Stable-Baselines documentation for detailed instructions.
