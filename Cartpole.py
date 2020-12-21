@@ -60,7 +60,7 @@ param_aux = {
 
 param_graf = {
     'nomes_var_tex': (r"$s$", r'$\dot{s}$', r'$\theta$', r'$\dot{\theta}$'),
-    'plot_var': ('Ação', 'Resultado', r"$s$", r'$\theta$'),
+    'plot_var': ('Action', 'Output', r"$s$", r'$\theta$'),
     'operadores': {'add': r'$+$', 'sub': r'$-$', 'mul': r'$\times$', 'div': r'$\div$',
                    'gt': r'$>$', 'sr': r'$\sqrt{\,}$', 'sen': r'$\sin$', 'sgn': 'sgn',
                    'constante': r'$R$'},
@@ -117,7 +117,7 @@ def avaliar_individuo(ind, num_episodios=param_pg['n_episodios'], num_entradas=p
                       plotar_var=param_graf['plot_var'], graficos=False, video=False, mujoco=param_aux['mujoco']):
     aptidoes = []
     tempo = 0
-    dic_stats = {'Tempo': [], 'Resultado': [], 'Acao': [], 'Custo Acumulado': []}
+    dic_stats = {'Time': [], 'Output': [], 'Action': [], 'Cumulative Reward': []}
     funcao_de_controle = toolbox.compilar_individuo(ind)
     ambiente = gym.make(ambiente)
     for obs in range(num_entradas):
@@ -145,8 +145,8 @@ def avaliar_individuo(ind, num_episodios=param_pg['n_episodios'], num_entradas=p
                 ambiente.render()
             if graficos:
                 tempo += 1
-                dic_stats['Tempo'].append(tempo), dic_stats['Resultado'].append(resultado),
-                dic_stats['Acao'].append(acao), dic_stats['Custo Acumulado'].append(custo_acumulado)
+                dic_stats['Time'].append(tempo), dic_stats['Output'].append(resultado),
+                dic_stats['Action'].append(acao), dic_stats['Cumulative Reward'].append(custo_acumulado)
                 for obs in range(num_entradas):
                     dic_stats['ARG' + str(obs)].append(observacao[obs])
         aptidoes.append(custo)
@@ -345,21 +345,21 @@ def plotar_arvore(ind):
 
 def plotar_vars_avaliacao(data=None, nomes_var=None, plotar_var=None, tempo_final=None):
     figura, eixo = plt.subplots(nrows=len(plotar_var), ncols=1, sharex='all')
-    data['Ação'] = data.pop('Acao')
+    # data['Ação'] = data.pop('Acao')
     for n in range(len(nomes_var)):
         data[nomes_var[n]] = data.pop('ARG' + str(n))
     if len(plotar_var) < 2:
-        eixo.plot('Tempo', plotar_var[0], data=data, ls='-.', marker='o', ms=4, color='blue', alpha=0.3)
-        eixo.set_xlabel('Tempo')
+        eixo.plot('Time', plotar_var[0], data=data, ls='-.', marker='o', ms=4, color='blue', alpha=0.3)
+        eixo.set_xlabel('Time')
         eixo.set_ylabel(plotar_var[0])
         eixo.grid()
     else:
         cores = ['b', 'g', 'r', 'm', 'c']
         for var in range(len(plotar_var)):
-            eixo[var].plot('Tempo', plotar_var[var], data=data, ls='-.', marker='o', ms=4, color=cores[var], alpha=0.3)
+            eixo[var].plot('Time', plotar_var[var], data=data, ls='-.', marker='o', ms=4, color=cores[var], alpha=0.3)
             eixo[var].set_ylabel(plotar_var[var])
             eixo[var].grid(True)
-    eixo[-1].set_xlabel('Tempo')  # nome apenas no último gráfico
+    eixo[-1].set_xlabel('Time')  # nome apenas no último gráfico
     eixo[-1].set_xlim(0, tempo_final)
 
 
@@ -603,7 +603,7 @@ else:
 plotar_hits(store_dict['estatisticas'])
 plotar_estatisticas_evolucao(store_dict['estatisticas'])
 plotar_ocorrencias(store_dict['ocorrencias'])
-avaliar_individuo(ind=store_dict['hallsdafama'][0][0], graficos=True, video=True)
+avaliar_individuo(ind=store_dict['hallsdafama'][0][0], graficos=True, video=False)
 plotar_arvore(store_dict['hallsdafama'][0][0])
 
 horas, resto = divmod(store_dict['texec'], 3600)
