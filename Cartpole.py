@@ -21,6 +21,7 @@ from deap import gp
 from deap import tools
 from deap import algorithms
 
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import networkx as nx
@@ -32,6 +33,7 @@ import gym
 #################################### PARÂMETROS ######################################################
 ######################################################################################################
 
+matplotlib.rcParams.update({'font.size': 10})
 
 random.seed(1)
 
@@ -337,9 +339,10 @@ def plotar_arvore(ind):
     g.add_nodes_from(nodes)
     g.add_edges_from(edges)
     pos = nx.drawing.nx_agraph.graphviz_layout(g, prog="dot")
-    nx.draw_networkx_nodes(g, pos, node_size=1100, node_color='black')
+    nx.draw_networkx_nodes(g, pos, node_size=1300, node_color='black')
     nx.draw_networkx_edges(g, pos)
-    nx.draw_networkx_labels(g, pos, labels, font_color='white', font_size=12)
+    nx.draw_networkx_labels(g, pos, labels, font_color='white', font_size=24)
+    plt.savefig('figs/fig_cartpole_tree.pdf')
     plt.show()
 
 
@@ -376,9 +379,9 @@ def plotar_hits(data=None, nrows=param_graf['hist_n_linhas'], ncols=param_graf['
             for thisbin, thispatch in zip(bins, patches):
                 color = plt.cm.viridis(norm(thisbin))
                 thispatch.set_facecolor(color)
-            eixo[i][j].set_title('Geração ' + str(graf[n]))
-            eixo[i][j].set_ylabel('Ocorrencias') if j is 0 else None
-            eixo[i][j].set_xlabel('Aptidão') if i is (nrows-1) else None
+            eixo[i][j].set_title('Generation ' + str(graf[n]))
+            eixo[i][j].set_ylabel('Count') if j is 0 else None
+            eixo[i][j].set_xlabel('Fitness') if i is (nrows-1) else None
             n += 1
 
 
@@ -601,9 +604,11 @@ else:
     store_file.close()
 
 plotar_hits(store_dict['estatisticas'])
+plt.savefig('figs/fig_cartpole_apt.pdf')
 plotar_estatisticas_evolucao(store_dict['estatisticas'])
 plotar_ocorrencias(store_dict['ocorrencias'])
 avaliar_individuo(ind=store_dict['hallsdafama'][0][0], graficos=True, video=False)
+plt.savefig('figs/fig_cartpole_control.pdf')
 plotar_arvore(store_dict['hallsdafama'][0][0])
 
 horas, resto = divmod(store_dict['texec'], 3600)

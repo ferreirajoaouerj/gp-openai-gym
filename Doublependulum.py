@@ -6,6 +6,7 @@ Documentation
 ######################################################################################################
 
 import os
+import sys
 import pickle
 import time
 import copy
@@ -21,6 +22,7 @@ from deap import gp
 from deap import tools
 from deap import algorithms
 
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import networkx as nx
@@ -28,10 +30,13 @@ import networkx as nx
 import gym
 import pybulletgym
 
+sys.path.append('C:\\Softwares\\Miniconda3\\envs\\gp-openai-gym\\lib\\site-packages\\pybullet_envs\\bullet\\bullet_client')
+
 ######################################################################################################
 #################################### PARÂMETROS ######################################################
 ######################################################################################################
 
+matplotlib.rcParams.update({'font.size': 10})
 
 random.seed(0)
 
@@ -62,7 +67,7 @@ param_graf = {
     'nomes_var_tex': (r"$s$", r'$\sin{(\theta)}$', r'$\sin{(\gamma)}$', r'$\cos{(\theta)}$', r'$\cos{(\gamma)}$',
                       r'$\dot{s}$', r'$\dot{\theta}$', r'$\dot{\gamma}$',
                       r'$f_r(s)$', r'$f_r(\theta)$', r'$f_r(\gamma)$'),
-    'plot_var': ('Ação', r"$s$", r'$\sin{(\theta)}$', r'$\sin{(\gamma)}$'),
+    'plot_var': ('Action', r"$s$", r'$\sin{(\theta)}$', r'$\sin{(\gamma)}$'),
     'operadores': {'add': r'$+$', 'sub': r'$-$', 'mul': r'$\times$', 'div': r'$\div$',
                    'gt': r'$>$', 'sr': r'$\sqrt{\,}$', 'sen': r'$\sin$', 'sgn': 'sgn',
                    'constante': r'$R$'},
@@ -121,7 +126,7 @@ def avaliar_individuo(ind, num_episodios=param_pg['n_episodios'], num_entradas=p
                       plotar_var=param_graf['plot_var'], graficos=False, video=False, mujoco=param_aux['mujoco']):
     aptidoes = []
     tempo = 0
-    dic_stats = {'Tempo': [], 'Resultado': [], 'Acao': [], 'Custo Acumulado': []}
+    dic_stats = {'Time': [], 'Output': [], 'Action': [], 'Cumulative Reward': []}
     funcao_de_controle = toolbox.compilar_individuo(ind)
     for obs in range(num_entradas):
         dic_stats['ARG' + str(obs)] = []
@@ -148,8 +153,8 @@ def avaliar_individuo(ind, num_episodios=param_pg['n_episodios'], num_entradas=p
                 ambiente.render()
             if graficos:
                 tempo += 1
-                dic_stats['Tempo'].append(tempo), dic_stats['Resultado'].append(resultado),
-                dic_stats['Acao'].append(acao), dic_stats['Custo Acumulado'].append(custo_acumulado)
+                dic_stats['Time'].append(tempo), dic_stats['Output'].append(resultado),
+                dic_stats['Action'].append(acao), dic_stats['Cumulative Reward'].append(custo_acumulado)
                 for obs in range(num_entradas):
                     dic_stats['ARG' + str(obs)].append(observacao[obs])
         aptidoes.append(custo)
@@ -326,7 +331,7 @@ def calcular_media_exec(lista_dic_stats, lista_dic_occ, lista_lista_const):
 
 
 def plotar_arvore(ind):
-    plt.figure()
+    plt.figure(figsize=(14,16))
     nodes, edges, labels = gp.graph(ind)
     for label_key, label_value in labels.items():
         for op_key, op_value in param_graf['operadores'].items():
@@ -340,29 +345,30 @@ def plotar_arvore(ind):
     g.add_nodes_from(nodes)
     g.add_edges_from(edges)
     pos = nx.drawing.nx_agraph.graphviz_layout(g, prog="dot")
-    nx.draw_networkx_nodes(g, pos, node_size=900, node_color='black')
+    nx.draw_networkx_nodes(g, pos, node_size=1300, node_color='black')
     nx.draw_networkx_edges(g, pos)
-    nx.draw_networkx_labels(g, pos, labels, font_color='white', font_size=10)
+    nx.draw_networkx_labels(g, pos, labels, font_color='white', font_size=15)
+    plt.savefig('figs/fig_dp_tree.pdf')
     plt.show()
 
 
 def plotar_vars_avaliacao(data=None, nomes_var=None, plotar_var=None, tempo_final=None):
     figura, eixo = plt.subplots(nrows=len(plotar_var), ncols=1, sharex='all')
-    data['Ação'] = data.pop('Acao')
+    # data['Ação'] = data.pop('Acao')
     for n in range(len(nomes_var)):
         data[nomes_var[n]] = data.pop('ARG' + str(n))
     if len(plotar_var) < 2:
-        eixo.plot('Tempo', plotar_var[0], data=data, ls='-.', marker='o', ms=5, color='blue', alpha=0.5)
-        eixo.set_xlabel('Tempo')
+        eixo.plot('Time', plotar_var[0], data=data, ls='-.', marker='o', ms=4, color='blue', alpha=0.3)
+        eixo.set_xlabel('Time')
         eixo.set_ylabel(plotar_var[0])
         eixo.grid()
     else:
         cores = ['b', 'g', 'r', 'm', 'c']
         for var in range(len(plotar_var)):
-            eixo[var].plot('Tempo', plotar_var[var], data=data, ls='-.', marker='o', ms=5, color=cores[var], alpha=0.5)
+            eixo[var].plot('Time', plotar_var[var], data=data, ls='-.', marker='o', ms=4, color=cores[var], alpha=0.3)
             eixo[var].set_ylabel(plotar_var[var])
             eixo[var].grid(True)
-    eixo[-1].set_xlabel('Tempo')  # nome apenas no último gráfico
+    eixo[-1].set_xlabel('Time')  # nome apenas no último gráfico
     eixo[-1].set_xlim(0, tempo_final)
 
 
@@ -399,9 +405,9 @@ def plotar_hits(data=None, nrows=param_graf['hist_n_linhas'], ncols=param_graf['
             for thisbin, thispatch in zip(bins, patches):
                 color = plt.cm.viridis(norm(thisbin))
                 thispatch.set_facecolor(color)
-            eixo[i][j].set_title('Geração ' + str(graf[n]))
-            eixo[i][j].set_ylabel('Ocorrencias') if j is 0 else None
-            eixo[i][j].set_xlabel('Aptidão') if i is (nrows-1) else None
+            eixo[i][j].set_title('Generation ' + str(graf[n]))
+            eixo[i][j].set_ylabel('Count') if j is 0 else None
+            eixo[i][j].set_xlabel('Fitness') if i is (nrows-1) else None
             n += 1
 
 
@@ -626,11 +632,13 @@ else:
     store_dict = pickle.load(store_file)
     store_file.close()
 
-# plotar_hits(store_dict['estatisticas'])
-# plotar_estatisticas_evolucao(store_dict['estatisticas'])
-# plotar_ocorrencias(store_dict['ocorrencias'])
-# avaliar_individuo(ind=store_dict['hallsdafama'][0][0], graficos=True, video=True)
-# plotar_arvore(store_dict['hallsdafama'][0][0])
+plotar_hits(store_dict['estatisticas'])
+plt.savefig('figs/fig_dp_apt.pdf')
+plotar_estatisticas_evolucao(store_dict['estatisticas'])
+plotar_ocorrencias(store_dict['ocorrencias'])
+avaliar_individuo(ind=store_dict['hallsdafama'][0][0], graficos=True, video=False)
+plt.savefig('figs/fig_dp_control.pdf')
+plotar_arvore(store_dict['hallsdafama'][0][0])
 
 horas, resto = divmod(store_dict['texec'], 3600)
 minutos, segundos = divmod(resto, 60)
